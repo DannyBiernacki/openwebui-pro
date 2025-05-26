@@ -47,4 +47,41 @@ version: 1.0
 - Pre-commit hooks dla test validation
 - Coverage reporting z badges
 - Performance benchmarking
+
+# Professional Testing Strategy 2025
+
+## Component Testing Standards
+Test shadcn/ui component integration:
+
+```typescript
+// Test custom components built on shadcn/ui
+import { render, screen } from '@testing-library/react'
+import { AIButton } from '@/components/ai/ai-button'
+
+describe('AIButton', () => {
+  it('should extend shadcn/ui Button correctly', () => {
+    render(<AIButton isProcessing>Test</AIButton>)
+    
+    // Test shadcn/ui Button base functionality
+    expect(screen.getByRole('button')).toBeInTheDocument()
+    expect(screen.getByRole('button')).toBeDisabled()
+    
+    // Test custom extension
+    expect(screen.getByText('Test')).toBeInTheDocument()
+  })
+})
+```
+
+## Testing Patterns
+- **Component Integration**: Test shadcn/ui + custom logic
+- **Design Token Usage**: Verify CSS Variables applied correctly  
+- **Accessibility**: Test built-in shadcn/ui accessibility
+- **TypeScript**: Ensure interface compliance
+
+## Quality Gates
+- [ ] All tests pass
+- [ ] shadcn/ui components used correctly
+- [ ] Design tokens applied properly
+- [ ] TypeScript interfaces validated
+- [ ] Accessibility standards met
 ```

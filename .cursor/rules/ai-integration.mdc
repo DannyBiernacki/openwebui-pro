@@ -53,4 +53,48 @@ version: 1.0
 - Typewriter effect dla user experience
 - Progress indicators dla long operations
 - Error handling z retry logic
+
+# Professional AI Integration Standards
+
+## AI Component Standards
+All AI components MUST use shadcn/ui base:
+
+```typescript
+// ✅ PROFESSIONAL - AI Streaming with shadcn/ui
+import { Card, CardHeader, CardContent } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+
+export const AIStreamingCard = ({ content, isStreaming, model }: Props) => (
+  <Card className="w-full">
+    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+      <div className="flex items-center space-x-2">
+        <Badge variant={isStreaming ? "default" : "secondary"}>
+          {model}
+        </Badge>
+        {isStreaming && (
+          <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+        )}
+      </div>
+    </CardHeader>
+    <CardContent>
+      <div className="prose dark:prose-invert max-w-none">
+        {content}
+      </div>
+    </CardContent>
+  </Card>
+)
+```
+
+## AI UX Patterns (shadcn/ui based)
+- **Progress Indicators**: Use shadcn/ui Progress component
+- **Status Badges**: Use shadcn/ui Badge with variants
+- **Action Buttons**: Use shadcn/ui Button with loading states
+- **Response Cards**: Use shadcn/ui Card with proper structure
+
+## M4 Pro AI Optimizations
+- Support dla 70B models (M4 Pro advantage)
+- Concurrent request handling
+- Real-time streaming with shadcn/ui components
+- Professional loading states and error boundaries
 ```

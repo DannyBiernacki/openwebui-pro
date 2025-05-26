@@ -3,14 +3,13 @@ description:
 globs: 
 alwaysApply: false
 ---
-```mdc
 ---
 type: always
 description: M4 Pro optimized development guidelines for OpenWebUI Pro
 version: 1.0
 ---
 
-# M4 Pro Development Guidelines - OpenWebUI Pro
+# Professional Development Guidelines - OpenWebUI Pro 2025
 
 ## Language & Communication
 - **ALWAYS respond in Polish**
@@ -22,34 +21,80 @@ version: 1.0
 - Project: /Volumes/T9/openwebui-pro
 - Architecture: ARM64 optimization required
 
+## Professional Standards Enforcement (NEW)
+**CRITICAL: Follow Enterprise-Grade Standards ONLY**
+
+### Component Standards Hierarchy:
+1. **shadcn/ui component** (FIRST CHOICE - industry standard)
+2. **Extend shadcn/ui** with composition (if customization needed)
+3. **Radix UI primitive** (if shadcn doesn't have it)
+4. **NEVER create custom components** without checking shadcn/ui first
+
+### Code Quality Enforcement:
+- **ZERO custom CSS classes** - use Tailwind utilities only
+- **ZERO improvised colors** - use CSS Variables from design tokens
+- **ALWAYS use cn() utility** for conditional classes
+- **shadcn/ui patterns ONLY** - no reinventing wheels
+
 ## Dependencies & Code Generation Flow
-1. **NAJPIERW** instaluj zależności (npm, pnpm, bun)
-2. **DOPIERO POTEM** generuj kod
-3. Gdy nie rozumiesz typów danych – nie zgaduj. Użyj @ts-expect-error, poproś o pomoc
+1. **NAJPIERW** check shadcn/ui documentation
+2. **INSTALL** required shadcn/ui components
+3. **THEN** install other dependencies (npm, pnpm, bun)
+4. **FINALLY** generate code using established patterns
+
+## Design System Standards (NEW)
+- **Design Tokens**: Use CSS Variables only (--primary, --background, etc.)
+- **Typography**: Inter (UI) + JetBrains Mono (code) - no custom fonts
+- **Colors**: CSS Variables from shadcn/ui theme system
+- **Spacing**: Tailwind spacing scale only (p-4, m-2, gap-6, etc.)
+- **Components**: shadcn/ui + proper TypeScript interfaces
+
+## Professional Component Pattern:
+```typescript
+// ✅ CORRECT - Professional Standard
+import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
+
+interface AIButtonProps extends React.ComponentProps<typeof Button> {
+  isProcessing?: boolean
+}
+
+export const AIButton = ({ isProcessing, className, ...props }: AIButtonProps) => (
+  <Button 
+    className={cn(
+      isProcessing && "opacity-70 cursor-wait",
+      className
+    )}
+    disabled={isProcessing}
+    {...props}
+  />
+)
+
+// ❌ WRONG - Never do this
+<button className="bg-blue-500 px-4 py-2 rounded-lg hover:bg-blue-600">
+```
 
 ## Documentation Standards
-- Dla każdej biblioteki NPM stwórz plik README.md w /docs/npm/{nazwa} z wersją, przykładami i linkami
-- Dokumentuj zmiany w osobnych plikach .md, nazwanych: YYYY-MM-DD_nazwa-funkcji.md
-- Aktualizuj pliki kontekstowe: .cursor-rules, rules.json, docs/specs.md
+- Every shadcn/ui component: document customizations
+- Design tokens: document all CSS Variables used
+- Component props: full TypeScript interfaces with JSDoc
+- Patterns: document composition over custom creation
 
-## Code Quality Requirements
-- Kod musi być czysty, modularny, zgodny z konwencją (SOLID, DRY, KISS)
-- Unikaj złożonych ternarów
-- Jeśli modyfikujesz kod AI, dodaj komentarz: // modified after AI gen
-- Każda funkcja powinna mieć adnotację @test-case i pokrycie testami jednostkowymi
-
-## Feature Development Process
-Każda nowa funkcjonalność powinna mieć:
-1. PRD (cel, wymagania, edge-case'y, metryki sukcesu)
-2. Checklistę wdrożeniową
-3. Testy jednostkowe (napisz NAJPIERW testy, potem kod)
-4. Dokumentację implementacji
+## Quality Gates (UPDATED)
+Before ANY component creation:
+1. [ ] Checked shadcn/ui documentation
+2. [ ] Used existing shadcn/ui component
+3. [ ] Applied design tokens only
+4. [ ] Added TypeScript interface
+5. [ ] Included accessibility features
+6. [ ] Added @test-case annotation
+7. [ ] NO custom CSS classes used
 
 ## AI Partnership Philosophy
-- AI jest partnerem – nie zakładaj, że ma zawsze rację
-- Weryfikuj, testuj, doprecyzowuj
-- Po zakończeniu zmian AI powinno dopisać: "Don't forget to commit!"
-- Zaproponuj odpowiedni git commit zgodny z Conventional Commits
+- AI follows professional standards religiously
+- No improvisation or "quick fixes"
+- Always suggest industry-standard solutions
+- End with: "Don't forget to commit!" + Conventional Commits
 
 ## Git Commit Standards (Conventional Commits)
 - feat(component): add new AI streaming component

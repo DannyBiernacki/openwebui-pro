@@ -14,37 +14,73 @@ glob_patterns:
 description: UI component development standards for OpenWebUI Pro
 version: 1.0
 ---
-# UI Component Development Standards
+# Enterprise UI Component Standards 2025
 
-## Framework Requirements
-- Komponenty UI twórz w oparciu o Tailwind, ShadCN, Radix
-- NIE używaj klas CSS bez kontekstu
-- Wszystkie komponenty muszą być responsive (mobile-first)
-- Dark/Light theme support wymagany
+## Component Creation Hierarchy (CRITICAL)
+**ALWAYS follow this order - NO EXCEPTIONS:**
 
-## Component Architecture  
-- Functional components z TypeScript strict mode
-- Proper prop interfaces z JSDoc documentation
-- Error boundaries dla complex components
-- Accessibility compliance (WCAG 2.1 AA)
+1. **Check shadcn/ui first**: https://ui.shadcn.com/docs/components
+2. **Use existing component**: Import and use directly
+3. **Extend if needed**: Composition pattern with proper props
+4. **Document customization**: Why and how you extended
 
-## AI-Specific UI Patterns
-- Real-time streaming response interfaces
-- Model health indicators z animations
-- Voice input z waveform visualization
-- Smart suggestions z contextual tooltips
-- Vector search results z relevance scores
+## shadcn/ui Component Standards
+```typescript
+// ✅ PROFESSIONAL - Use existing shadcn/ui
+import { Button, Dialog, Card, Input, Select } from "@/components/ui/*"
 
-## Performance Requirements
-- React.memo dla expensive components
-- Lazy loading dla off-screen elements
-- Bundle size optimization
-- Core Web Vitals compliance
+// ✅ PROFESSIONAL - Extend with composition
+import { Button } from "@/components/ui/button"
+export const AIProcessButton = (props) => (
+  <Button variant="default" size="lg" {...props}>
+    {props.isProcessing && <Spinner />}
+    {props.children}
+  </Button>
+)
 
-## Three UI Modes Support
-- Simple Workspace: Dashboard z 4 panels
-- Creative Canvas: Drag & drop widgets
-- Advanced Wizard: Step-by-step flow
+// ❌ AMATEUR - Never create from scratch
+const CustomButton = () => (
+  <button className="bg-blue-500 px-4 py-2 rounded">
+    Custom Button
+  </button>
+)
+```
 
-Ensure każdy komponent działa we wszystkich trzech modes.
+## Design Token Usage (REQUIRED)
+```typescript
+// ✅ CORRECT - Use CSS Variables
+className="bg-primary text-primary-foreground"
+className="border-border bg-background"
+
+// ❌ WRONG - Never hardcode colors
+className="bg-blue-500 text-white"
+className="border-gray-200 bg-white"
+```
+
+## Component Architecture Patterns
+- **Compound Components**: For complex UI (shadcn/ui style)
+- **Render Props**: For flexible behavior
+- **Custom Hooks**: For reusable logic
+- **TypeScript Interfaces**: For all props
+
+## Required Component Features
+Every component MUST have:
+- [ ] TypeScript interface with JSDoc
+- [ ] shadcn/ui base component
+- [ ] Proper accessibility (built-in with shadcn/ui)
+- [ ] Dark/Light theme support (automatic with CSS Variables)
+- [ ] Mobile responsiveness
+- [ ] @test-case annotation
+
+## Three UI Modes Compatibility
+Ensure każdy component works in:
+- Simple Workspace (dashboard layout)
+- Creative Canvas (drag & drop)
+- Advanced Wizard (step-by-step)
+
+## Performance Standards
+- React.memo for expensive components
+- Lazy loading with React.lazy
+- Bundle optimization with tree-shaking
+- No unnecessary re-renders
 ```
