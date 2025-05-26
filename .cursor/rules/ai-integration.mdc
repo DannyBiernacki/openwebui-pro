@@ -1,5 +1,56 @@
 ---
-description:
-globs:
+description: 
+globs: 
 alwaysApply: false
 ---
+```mdc
+---
+type: auto_attached
+glob_patterns:
+  - "src/lib/ai/**"
+  - "src/services/ai/**"
+  - "**/*ai*"
+  - "**/*llm*"
+  - "**/*model*"
+description: AI integration patterns and best practices
+version: 1.0
+---
+
+# AI Integration Guidelines
+
+## Architecture Patterns
+- Local-first approach: Ollama primary, OpenAI fallback
+- Hybrid routing z intelligent model selection
+- Streaming responses z real-time UI updates
+- Cost optimization przez local processing preference
+
+## M4 Pro AI Capabilities
+- Support dla 70B models (M4 Pro advantage)
+- Concurrent request handling
+- Large context windows (8K+)
+- GPU acceleration enabled
+## Implementation Standards
+- Type-safe API integration z Fastify backend
+- Proper error handling z graceful degradation
+- Rate limiting i request queuing
+- Performance monitoring i metrics collection
+- User feedback dla processing states
+
+## Context Management Best Practices
+- Use @-symbols for precise context: @file, @folder, @code
+- Implement RAG pipeline z PostgreSQL + Qdrant
+- Vector search optimization dla document retrieval
+- Smart suggestion generation based na document analysis
+
+## Ollama + OpenAI Integration
+- Health check system dla model availability
+- Automatic fallback mechanisms
+- Cost tracking i usage analytics
+- Response caching strategies
+
+## Streaming Implementation
+- WebSocket dla real-time responses
+- Typewriter effect dla user experience
+- Progress indicators dla long operations
+- Error handling z retry logic
+```

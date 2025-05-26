@@ -1,5 +1,54 @@
 ---
-description:
-globs:
+description: 
+globs: 
 alwaysApply: false
 ---
+```mdc
+---
+type: manual
+description: Git workflow standards and PR requirements
+version: 1.0
+---
+# Git Workflow Standards
+
+## Pull Request Requirements
+Każdy Pull Request powinien zawierać:
+1. **Changelog** - what changed and why
+2. **Link do dokumentacji** - updated docs
+3. **Zrzuty ekranu** (jeśli dotyczy UI)
+4. **Test coverage report**
+5. **Performance impact analysis**
+
+## AI-Generated Code Standards
+- Zmiany powinny być jawne i opatrzone komentarzem
+- Każdy AI-generated code review required
+- Proper attribution: "// modified after AI gen"
+- Verification that tests cover AI-generated functionality
+
+## Commit Process
+1. AI should end with: "Don't forget to commit!"
+2. Suggest appropriate commit message
+3. Verify all changes documented
+4. Check test coverage completeness
+
+## Conventional Commits (REQUIRED)
+- feat(component): add new AI streaming component
+- fix(api): resolve Ollama connection timeout
+- docs(readme): update setup instructions
+- refactor(utils): refactor utils for performance
+- style(tailwind): add new tailwind class
+- test(unit): add unit test coverage
+- chore(deps): update dependencies
+
+## File Organization
+```
+/Volumes/T9/openwebui-pro/
+├── frontend/              # Next.js app
+├── backend/               # Fastify API
+├── shared/                # Common types
+├── docs/                  # Documentation
+│   └── npm/              # NPM library documentation
+├── .cursor/rules/         # Cursor configuration
+└── deployment/            # Docker/Coolify
+```
+```

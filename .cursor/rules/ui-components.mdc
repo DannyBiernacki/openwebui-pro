@@ -1,5 +1,50 @@
 ---
-description:
-globs:
+description: 
+globs: 
 alwaysApply: false
 ---
+```mdc
+---
+type: auto_attached
+glob_patterns: 
+  - "src/components/**"
+  - "src/pages/**" 
+  - "**/*.tsx"
+  - "**/*.jsx"
+description: UI component development standards for OpenWebUI Pro
+version: 1.0
+---
+# UI Component Development Standards
+
+## Framework Requirements
+- Komponenty UI twórz w oparciu o Tailwind, ShadCN, Radix
+- NIE używaj klas CSS bez kontekstu
+- Wszystkie komponenty muszą być responsive (mobile-first)
+- Dark/Light theme support wymagany
+
+## Component Architecture  
+- Functional components z TypeScript strict mode
+- Proper prop interfaces z JSDoc documentation
+- Error boundaries dla complex components
+- Accessibility compliance (WCAG 2.1 AA)
+
+## AI-Specific UI Patterns
+- Real-time streaming response interfaces
+- Model health indicators z animations
+- Voice input z waveform visualization
+- Smart suggestions z contextual tooltips
+- Vector search results z relevance scores
+
+## Performance Requirements
+- React.memo dla expensive components
+- Lazy loading dla off-screen elements
+- Bundle size optimization
+- Core Web Vitals compliance
+
+## Three UI Modes Support
+- Simple Workspace: Dashboard z 4 panels
+- Creative Canvas: Drag & drop widgets
+- Advanced Wizard: Step-by-step flow
+
+Ensure każdy komponent działa we wszystkich trzech modes.
+```

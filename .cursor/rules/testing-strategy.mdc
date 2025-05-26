@@ -1,5 +1,50 @@
 ---
-description:
-globs:
+description: 
+globs: 
 alwaysApply: false
 ---
+```mdc
+---
+type: agent_requested
+description: Comprehensive testing strategy and TDD implementation
+version: 1.0
+---
+# Testing Strategy - Test-Driven Development
+
+## TDD Philosophy z AI
+- **ZAWSZE** write tests FIRST, then implementation
+- Iterate until all tests pass
+- AI partnership w testing: verify, don't assume
+
+## Testing Hierarchy
+1. **Unit Tests**: Individual functions/components
+2. **Integration Tests**: API endpoints, service interactions  
+3. **E2E Tests**: Critical user flows (all 3 UI modes)
+4. **Performance Tests**: AI response times, bundle size
+5. **Accessibility Tests**: Screen reader, keyboard navigation
+
+## Coverage Requirements
+- Minimum 80% code coverage
+- 100% coverage dla critical AI paths
+- All edge cases i error scenarios
+- Mock external dependencies (Ollama, OpenAI APIs)
+
+## AI-Specific Testing
+- WebSocket streaming response tests
+- Model switching workflow tests
+- Vector search accuracy tests
+- Voice input integration tests
+- Error handling z fallback scenarios
+
+## M4 Pro Testing Optimizations
+- Parallel test execution (wykorzystaj 14 cores)
+- Large model testing scenarios
+- Performance benchmarks
+- Memory usage validation
+
+## Test Automation
+- GitHub Actions integration
+- Pre-commit hooks dla test validation
+- Coverage reporting z badges
+- Performance benchmarking
+```

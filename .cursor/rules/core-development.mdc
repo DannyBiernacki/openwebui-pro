@@ -1,5 +1,81 @@
 ---
-description:
-globs:
+description: 
+globs: 
 alwaysApply: false
 ---
+```mdc
+---
+type: always
+description: M4 Pro optimized development guidelines for OpenWebUI Pro
+version: 1.0
+---
+
+# M4 Pro Development Guidelines - OpenWebUI Pro
+
+## Language & Communication
+- **ALWAYS respond in Polish**
+- Twoim celem jest pomóc mi osiągnąć mój cel. Nie tylko odpowiadaj – prowadź mnie
+- Jeśli czegoś nie umiesz – powiedz, że nie umiesz
+
+## System Context
+- Machine: MacBook Pro M4 Pro (14 cores, 48GB RAM)
+- Project: /Volumes/T9/openwebui-pro
+- Architecture: ARM64 optimization required
+
+## Dependencies & Code Generation Flow
+1. **NAJPIERW** instaluj zależności (npm, pnpm, bun)
+2. **DOPIERO POTEM** generuj kod
+3. Gdy nie rozumiesz typów danych – nie zgaduj. Użyj @ts-expect-error, poproś o pomoc
+
+## Documentation Standards
+- Dla każdej biblioteki NPM stwórz plik README.md w /docs/npm/{nazwa} z wersją, przykładami i linkami
+- Dokumentuj zmiany w osobnych plikach .md, nazwanych: YYYY-MM-DD_nazwa-funkcji.md
+- Aktualizuj pliki kontekstowe: .cursor-rules, rules.json, docs/specs.md
+
+## Code Quality Requirements
+- Kod musi być czysty, modularny, zgodny z konwencją (SOLID, DRY, KISS)
+- Unikaj złożonych ternarów
+- Jeśli modyfikujesz kod AI, dodaj komentarz: // modified after AI gen
+- Każda funkcja powinna mieć adnotację @test-case i pokrycie testami jednostkowymi
+
+## Feature Development Process
+Każda nowa funkcjonalność powinna mieć:
+1. PRD (cel, wymagania, edge-case'y, metryki sukcesu)
+2. Checklistę wdrożeniową
+3. Testy jednostkowe (napisz NAJPIERW testy, potem kod)
+4. Dokumentację implementacji
+
+## AI Partnership Philosophy
+- AI jest partnerem – nie zakładaj, że ma zawsze rację
+- Weryfikuj, testuj, doprecyzowuj
+- Po zakończeniu zmian AI powinno dopisać: "Don't forget to commit!"
+- Zaproponuj odpowiedni git commit zgodny z Conventional Commits
+
+## Git Commit Standards (Conventional Commits)
+- feat(component): add new AI streaming component
+- fix(api): resolve Ollama connection timeout
+- docs(readme): update setup instructions
+- refactor(utils): optimize vector search performance
+- style(tailwind): add AI-specific design tokens
+- test(unit): add comprehensive AI service tests
+- chore(deps): update dependencies to latest versions
+
+## Tech Stack (2025 Optimized)
+- Frontend: Next.js 14 + TypeScript + Tailwind + shadcn/ui
+- Backend: Fastify (not Express) - 70% faster
+- Database: PostgreSQL + Drizzle ORM
+- Vector DB: Qdrant (open source)
+- AI: Ollama (local 70B) + OpenAI (fallback)
+- Auth: Lucia (TypeScript-first)
+## M4 Pro Optimizations
+- Use 48GB RAM for larger AI models
+- Leverage 10 performance cores
+- ARM64 native packages preferred
+- Concurrent AI processing enabled
+
+## Development Flow
+1. Write tests first (TDD)
+2. Implement with M4 Pro optimizations
+3. Verify performance targets
+4. Document and commit
+```
