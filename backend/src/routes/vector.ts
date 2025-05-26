@@ -23,7 +23,14 @@ export async function vectorRoutes(fastify: FastifyInstance) {
   // Endpoint do tworzenia kolekcji
   fastify.post('/collections', {
     schema: {
-      body: createCollectionSchema,
+      body: {
+        type: 'object',
+        required: ['name', 'vectorSize'],
+        properties: {
+          name: { type: 'string' },
+          vectorSize: { type: 'number', minimum: 1 }
+        }
+      }
     },
     handler: async (request, reply) => {
       const { name, vectorSize } = createCollectionSchema.parse(request.body);
@@ -35,10 +42,25 @@ export async function vectorRoutes(fastify: FastifyInstance) {
   // Endpoint do dodawania wektorów
   fastify.post('/collections/:collectionName/vectors', {
     schema: {
-      params: z.object({
-        collectionName: z.string(),
-      }),
-      body: z.array(vectorPointSchema),
+      params: {
+        type: 'object',
+        required: ['collectionName'],
+        properties: {
+          collectionName: { type: 'string' }
+        }
+      },
+      body: {
+        type: 'array',
+        items: {
+          type: 'object',
+          required: ['id', 'vector', 'payload'],
+          properties: {
+            id: { type: 'string' },
+            vector: { type: 'array', items: { type: 'number' } },
+            payload: { type: 'object', additionalProperties: true }
+          }
+        }
+      }
     },
     handler: async (request, reply) => {
       const { collectionName } = request.params as { collectionName: string };
@@ -51,10 +73,21 @@ export async function vectorRoutes(fastify: FastifyInstance) {
   // Endpoint do wyszukiwania wektorów
   fastify.post('/collections/:collectionName/search', {
     schema: {
-      params: z.object({
-        collectionName: z.string(),
-      }),
-      body: searchVectorsSchema.omit({ collectionName: true }),
+      params: {
+        type: 'object',
+        required: ['collectionName'],
+        properties: {
+          collectionName: { type: 'string' }
+        }
+      },
+      body: {
+        type: 'object',
+        required: ['queryVector'],
+        properties: {
+          queryVector: { type: 'array', items: { type: 'number' } },
+          limit: { type: 'number', minimum: 1 }
+        }
+      }
     },
     handler: async (request, reply) => {
       const { collectionName } = request.params as { collectionName: string };
@@ -67,9 +100,13 @@ export async function vectorRoutes(fastify: FastifyInstance) {
   // Endpoint do usuwania kolekcji
   fastify.delete('/collections/:collectionName', {
     schema: {
-      params: z.object({
-        collectionName: z.string(),
-      }),
+      params: {
+        type: 'object',
+        required: ['collectionName'],
+        properties: {
+          collectionName: { type: 'string' }
+        }
+      }
     },
     handler: async (request, reply) => {
       const { collectionName } = request.params as { collectionName: string };

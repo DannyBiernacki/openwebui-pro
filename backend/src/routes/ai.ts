@@ -12,7 +12,15 @@ export async function aiRoutes(fastify: FastifyInstance) {
   // Endpoint do przetwarzania zapytań AI
   fastify.post('/process', {
     schema: {
-      body: processRequestSchema,
+      body: {
+        type: 'object',
+        required: ['prompt', 'model'],
+        properties: {
+          prompt: { type: 'string', minLength: 1 },
+          model: { type: 'string' },
+          options: { type: 'object', additionalProperties: true }
+        }
+      }
     },
     handler: async (request, reply) => {
       const { prompt, model, options } = processRequestSchema.parse(request.body);
