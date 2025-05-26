@@ -1,0 +1,66 @@
+name: Accessibility Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    - cron: '0 0 * * 0'
+
+jobs:
+  accessibility:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run pa11y-ci
+        run: pnpm test:a11y
+
+      - name: Run axe-core
+        run: pnpm test:axe
+
+      - name: Run WAVE
+        uses: pa11y/pa11y-ci-action@v1
+        with:
+          config: .pa11yci.json
+
+      - name: Run Lighthouse Accessibility
+        uses: treosh/lighthouse-ci-action@v9
+        with:
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+          configPath: './lighthouserc.js'
+          runs: 3
+          assertions:
+            "categories:accessibility:score": ["error", {"minScore": 0.9}]
+
+      - name: Upload Accessibility Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: accessibility-report
+          path: |
+            pa11y-report.json
+            axe-report.json
+            wave-report.json
+            .lighthouseci/
+
+      - name: Check Accessibility Budget
+        run: |
+          if [ -f "pa11y-report.json" ]; then
+            pnpm check-accessibility-budget
+          fi 

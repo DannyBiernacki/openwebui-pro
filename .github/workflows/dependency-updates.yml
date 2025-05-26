@@ -1,0 +1,83 @@
+name: Dependency Updates
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # Co tydzień w niedzielę
+  workflow_dispatch:      # Ręczne uruchomienie
+
+jobs:
+  update-deps:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Check for updates
+        id: check
+        run: pnpm check-updates
+        continue-on-error: true
+
+      - name: Create Pull Request
+        if: steps.check.outcome == 'success'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore(deps): update dependencies'
+          title: 'chore(deps): update dependencies'
+          body: |
+            ## Zmiany w zależnościach
+            
+            ${{ steps.check.outputs.updates }}
+            
+            ## Instalacja
+            
+            ```bash
+            pnpm install
+            ```
+            
+            ## Testy
+            
+            ```bash
+            pnpm test
+            ```
+          branch: chore/update-dependencies
+          base: develop
+          labels: |
+            dependencies
+            automated pr
+          delete-branch: true
+
+      - name: Create Update Report
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const updates = `${{ steps.check.outputs.updates }}`;
+            
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Dependency Update Report - ${new Date().toISOString().split('T')[0]}`,
+              body: `
+                # Dependency Update Report
+                
+                ## Available Updates
+                ${updates || 'No updates available'}
+                
+                ## Next Check
+                Scheduled for next Sunday at midnight UTC.
+              `
+            }) 

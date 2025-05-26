@@ -1,0 +1,94 @@
+# Etykiety dla typów zmian
+'type: bug':
+  - '**/*.test.ts'
+  - '**/*.test.tsx'
+  - '**/__tests__/**'
+  - '**/test/**'
+
+'type: feature':
+  - 'src/features/**'
+  - 'src/components/**'
+  - 'src/hooks/**'
+
+'type: documentation':
+  - 'docs/**'
+  - '*.md'
+  - '**/*.md'
+
+'type: refactor':
+  - 'src/lib/**'
+  - 'src/utils/**'
+  - 'src/services/**'
+
+'type: performance':
+  - 'src/performance/**'
+  - 'src/optimization/**'
+
+'type: security':
+  - 'src/security/**'
+  - 'src/auth/**'
+
+'type: accessibility':
+  - 'src/a11y/**'
+  - 'src/accessibility/**'
+
+# Etykiety dla priorytetów
+'priority: high':
+  - 'src/security/**'
+  - 'src/auth/**'
+  - 'src/core/**'
+
+'priority: medium':
+  - 'src/features/**'
+  - 'src/components/**'
+
+'priority: low':
+  - 'docs/**'
+  - 'src/examples/**'
+
+# Etykiety dla statusu
+'status: needs review':
+  - 'src/**'
+  - 'docs/**'
+
+'status: in progress':
+  - 'src/**'
+  - 'docs/**'
+
+'status: blocked':
+  - 'src/**'
+  - 'docs/**'
+
+# Etykiety dla obszarów
+'area: frontend':
+  - 'src/components/**'
+  - 'src/hooks/**'
+  - 'src/styles/**'
+
+'area: backend':
+  - 'src/api/**'
+  - 'src/services/**'
+  - 'src/db/**'
+
+'area: ai':
+  - 'src/ai/**'
+  - 'src/models/**'
+  - 'src/ollama/**'
+
+'area: m4':
+  - 'src/m4/**'
+  - 'src/optimization/**'
+  - 'src/performance/**'
+
+# Etykiety dla wersji
+'version: major':
+  - 'package.json'
+  - 'CHANGELOG.md'
+
+'version: minor':
+  - 'src/features/**'
+  - 'src/components/**'
+
+'version: patch':
+  - 'src/fixes/**'
+  - 'src/patches/**' 

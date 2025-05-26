@@ -1,0 +1,88 @@
+name: Backup
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Codziennie o północy
+  workflow_dispatch:      # Ręczne uruchomienie
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Create database backup
+        run: pnpm db:backup
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          BACKUP_PATH: ./backups
+
+      - name: Create models backup
+        run: pnpm models:backup
+        env:
+          MODELS_PATH: ./models
+          BACKUP_PATH: ./backups
+
+      - name: Create configuration backup
+        run: pnpm config:backup
+        env:
+          CONFIG_PATH: ./config
+          BACKUP_PATH: ./backups
+
+      - name: Compress backups
+        run: |
+          cd backups
+          tar -czf backup-$(date +%Y%m%d).tar.gz *
+
+      - name: Upload to GitHub Releases
+        uses: softprops/action-gh-release@v1
+        if: always()
+        with:
+          files: ./backups/backup-*.tar.gz
+          tag_name: backup-$(date +%Y%m%d)
+          name: Backup $(date +%Y-%m-%d)
+          body: |
+            Automatyczna kopia zapasowa z $(date +%Y-%m-%d)
+            
+            Zawartość:
+            - Baza danych
+            - Modele AI
+            - Konfiguracja
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload to S3
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Upload backup to S3
+        run: |
+          aws s3 cp ./backups/backup-*.tar.gz s3://${{ secrets.AWS_BUCKET }}/backups/
+
+      - name: Cleanup old backups
+        run: |
+          find ./backups -name "backup-*.tar.gz" -mtime +7 -delete
+          aws s3 ls s3://${{ secrets.AWS_BUCKET }}/backups/ | sort -r | tail -n +8 | while read -r line; do
+            filename=$(echo "$line" | awk '{print $4}')
+            aws s3 rm "s3://${{ secrets.AWS_BUCKET }}/backups/$filename"
+          done 

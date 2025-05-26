@@ -1,0 +1,85 @@
+name: Monitoring
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'  # Co 5 minut
+  workflow_dispatch:        # Ręczne uruchomienie
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Check API Health
+        run: pnpm health:check
+        env:
+          API_URL: ${{ secrets.API_URL }}
+          API_KEY: ${{ secrets.API_KEY }}
+
+      - name: Check Database Health
+        run: pnpm db:health
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: Check AI Models Health
+        run: pnpm ai:health
+        env:
+          OLLAMA_HOST: ${{ secrets.OLLAMA_HOST }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+      - name: Check System Resources
+        run: pnpm system:check
+        env:
+          M4_MEMORY_LIMIT: ${{ secrets.M4_MEMORY_LIMIT }}
+          M4_WORKERS: ${{ secrets.M4_WORKERS }}
+
+      - name: Send Metrics to Prometheus
+        run: pnpm metrics:send
+        env:
+          PROMETHEUS_URL: ${{ secrets.PROMETHEUS_URL }}
+          PROMETHEUS_TOKEN: ${{ secrets.PROMETHEUS_TOKEN }}
+
+      - name: Send Alerts to Grafana
+        run: pnpm alerts:send
+        env:
+          GRAFANA_URL: ${{ secrets.GRAFANA_URL }}
+          GRAFANA_TOKEN: ${{ secrets.GRAFANA_TOKEN }}
+
+      - name: Create Status Report
+        run: pnpm status:report
+        env:
+          REPORT_PATH: ./reports
+
+      - name: Upload Status Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: status-report
+          path: ./reports/status-*.json
+
+      - name: Notify on Issues
+        if: failure()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: 'Monitoring Alert: System Issues Detected',
+              body: 'System monitoring detected issues. Please check the status report for details.'
+            }) 

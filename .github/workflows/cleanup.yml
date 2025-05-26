@@ -1,0 +1,155 @@
+name: Cleanup
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # Co tydzień w niedzielę
+  workflow_dispatch:      # Ręczne uruchomienie
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Cleanup old artifacts
+        uses: geekyeggo/delete-artifact@v2
+        with:
+          name: 'analytics-reports'
+          days: 30
+        continue-on-error: true
+
+      - name: Cleanup old releases
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const releases = await github.rest.repos.listReleases({
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+            
+            const oldReleases = releases.data.filter(release => {
+              const releaseDate = new Date(release.created_at);
+              const thirtyDaysAgo = new Date();
+              thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+              return releaseDate < thirtyDaysAgo && !release.draft;
+            });
+            
+            for (const release of oldReleases) {
+              await github.rest.repos.deleteRelease({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                release_id: release.id
+              });
+            }
+
+      - name: Cleanup old branches
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const branches = await github.rest.repos.listBranches({
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+            
+            const oldBranches = branches.data.filter(branch => {
+              const branchDate = new Date(branch.commit.commit.author.date);
+              const thirtyDaysAgo = new Date();
+              thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+              return branchDate < thirtyDaysAgo && branch.name !== 'main' && branch.name !== 'develop';
+            });
+            
+            for (const branch of oldBranches) {
+              await github.rest.git.deleteRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: `heads/${branch.name}`
+              });
+            }
+
+      - name: Cleanup old issues
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'closed'
+            });
+            
+            const oldIssues = issues.data.filter(issue => {
+              const issueDate = new Date(issue.closed_at);
+              const ninetyDaysAgo = new Date();
+              ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+              return issueDate < ninetyDaysAgo;
+            });
+            
+            for (const issue of oldIssues) {
+              await github.rest.issues.lock({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number
+              });
+            }
+
+      - name: Cleanup old pull requests
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const pulls = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'closed'
+            });
+            
+            const oldPulls = pulls.data.filter(pull => {
+              const pullDate = new Date(pull.closed_at);
+              const ninetyDaysAgo = new Date();
+              ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+              return pullDate < ninetyDaysAgo;
+            });
+            
+            for (const pull of oldPulls) {
+              await github.rest.issues.lock({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pull.number
+              });
+            }
+
+      - name: Create Cleanup Report
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Cleanup Report - ${new Date().toISOString().split('T')[0]}`,
+              body: `
+                # Cleanup Report
+                
+                ## Cleanup Actions
+                - Old artifacts removed
+                - Old releases deleted
+                - Old branches deleted
+                - Old issues locked
+                - Old pull requests locked
+                
+                ## Next Cleanup
+                Scheduled for next Sunday at midnight UTC.
+              `
+            }) 

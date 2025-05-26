@@ -1,0 +1,22 @@
+name: Auto Close Stale Issues and PRs
+
+on:
+  schedule:
+    - cron: '0 2 * * *' # codziennie o 2:00
+  workflow_dispatch:
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v9
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          stale-issue-message: 'To zgłoszenie jest nieaktywne od 30 dni i zostanie zamknięte, jeśli nie pojawi się nowa aktywność.'
+          stale-pr-message: 'Ten pull request jest nieaktywny od 30 dni i zostanie zamknięty, jeśli nie pojawi się nowa aktywność.'
+          days-before-stale: 30
+          days-before-close: 7
+          exempt-issue-labels: 'pinned,security,keep-open'
+          exempt-pr-labels: 'pinned,security,keep-open'
+          close-issue-message: 'Zamykam zgłoszenie z powodu braku aktywności.'
+          close-pr-message: 'Zamykam pull request z powodu braku aktywności.' 

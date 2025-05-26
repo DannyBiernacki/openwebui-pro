@@ -1,0 +1,47 @@
+name: Notifications
+
+on:
+  workflow_run:
+    workflows: ["CI/CD", "Security Scan", "Performance Tests", "Accessibility Tests"]
+    types:
+      - completed
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion != 'skipped' }}
+    steps:
+      - name: Notify on Slack
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: always()
+
+      - name: Notify on Discord
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        with:
+          args: Workflow ${{ github.event.workflow_run.name }} ${{ github.event.workflow_run.conclusion }}
+        if: always()
+
+      - name: Notify on Email
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.SMTP_SERVER }}
+          server_port: ${{ secrets.SMTP_PORT }}
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: Workflow ${{ github.event.workflow_run.name }} ${{ github.event.workflow_run.conclusion }}
+          body: |
+            Workflow: ${{ github.event.workflow_run.name }}
+            Status: ${{ github.event.workflow_run.conclusion }}
+            Commit: ${{ github.event.workflow_run.head_commit.message }}
+            Author: ${{ github.event.workflow_run.head_commit.author.name }}
+            URL: ${{ github.event.workflow_run.html_url }}
+          to: ${{ secrets.NOTIFICATION_EMAIL }}
+          from: GitHub Actions
+        if: always() 

@@ -1,0 +1,9 @@
+addReviewers: true
+addAssignees: true
+reviewers:
+  - DannyBiernacki
+assignees:
+  - DannyBiernacki
+numberOfReviewers: 1
+numberOfAssignees: 1
+skipDraft: true 

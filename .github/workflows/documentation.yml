@@ -1,0 +1,120 @@
+name: Documentation
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'docs/**'
+      - 'src/**'
+      - 'package.json'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'docs/**'
+      - 'src/**'
+      - 'package.json'
+  workflow_dispatch:
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Generate API Documentation
+        run: pnpm docs:api
+        env:
+          DOCS_PATH: ./docs/api
+
+      - name: Generate Type Documentation
+        run: pnpm docs:types
+        env:
+          DOCS_PATH: ./docs/types
+
+      - name: Generate Component Documentation
+        run: pnpm docs:components
+        env:
+          DOCS_PATH: ./docs/components
+
+      - name: Generate Architecture Documentation
+        run: pnpm docs:architecture
+        env:
+          DOCS_PATH: ./docs/architecture
+
+      - name: Generate Performance Documentation
+        run: pnpm docs:performance
+        env:
+          DOCS_PATH: ./docs/performance
+
+      - name: Generate Security Documentation
+        run: pnpm docs:security
+        env:
+          DOCS_PATH: ./docs/security
+
+      - name: Generate Accessibility Documentation
+        run: pnpm docs:accessibility
+        env:
+          DOCS_PATH: ./docs/accessibility
+
+      - name: Generate M4 Pro Documentation
+        run: pnpm docs:m4
+        env:
+          DOCS_PATH: ./docs/m4
+
+      - name: Build Documentation
+        run: pnpm docs:build
+        env:
+          DOCS_PATH: ./docs
+
+      - name: Deploy Documentation
+        if: github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/dist
+          publish_branch: gh-pages
+          commit_message: 'docs: update documentation'
+
+      - name: Create Documentation Report
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Documentation Update - ${new Date().toISOString().split('T')[0]}`,
+              body: `
+                # Documentation Update
+                
+                ## Generated Documentation
+                - API Documentation
+                - Type Documentation
+                - Component Documentation
+                - Architecture Documentation
+                - Performance Documentation
+                - Security Documentation
+                - Accessibility Documentation
+                - M4 Pro Documentation
+                
+                ## Deployment
+                Documentation has been deployed to GitHub Pages.
+                
+                ## Next Update
+                Documentation will be updated on the next push to main or develop.
+              `
+            }) 

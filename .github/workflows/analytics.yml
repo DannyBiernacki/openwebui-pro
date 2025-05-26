@@ -1,0 +1,117 @@
+name: Analytics
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Codziennie o północy
+  workflow_dispatch:      # Ręczne uruchomienie
+
+jobs:
+  analytics:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Collect Usage Analytics
+        run: pnpm analytics:collect
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ANALYTICS_PATH: ./analytics
+
+      - name: Process AI Metrics
+        run: pnpm ai:metrics
+        env:
+          OLLAMA_HOST: ${{ secrets.OLLAMA_HOST }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+      - name: Generate Performance Report
+        run: pnpm performance:report
+        env:
+          REPORT_PATH: ./reports
+
+      - name: Generate User Analytics
+        run: pnpm user:analytics
+        env:
+          ANALYTICS_PATH: ./analytics
+
+      - name: Generate System Analytics
+        run: pnpm system:analytics
+        env:
+          M4_MEMORY_LIMIT: ${{ secrets.M4_MEMORY_LIMIT }}
+          M4_WORKERS: ${{ secrets.M4_WORKERS }}
+
+      - name: Create Analytics Dashboard
+        run: pnpm dashboard:create
+        env:
+          DASHBOARD_PATH: ./dashboards
+
+      - name: Upload Analytics Reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: analytics-reports
+          path: |
+            ./analytics/
+            ./reports/
+            ./dashboards/
+
+      - name: Send Analytics to Plausible
+        run: pnpm plausible:send
+        env:
+          PLAUSIBLE_DOMAIN: ${{ secrets.PLAUSIBLE_DOMAIN }}
+          PLAUSIBLE_API_KEY: ${{ secrets.PLAUSIBLE_API_KEY }}
+
+      - name: Create Analytics Summary
+        run: pnpm analytics:summary
+        env:
+          SUMMARY_PATH: ./summaries
+
+      - name: Create Analytics Issue
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const summary = require('./summaries/analytics-summary.json');
+            
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Analytics Report - ${new Date().toISOString().split('T')[0]}`,
+              body: `
+                # Analytics Report
+                
+                ## Usage Statistics
+                - Total Users: ${summary.totalUsers}
+                - Active Users: ${summary.activeUsers}
+                - Total Requests: ${summary.totalRequests}
+                
+                ## Performance Metrics
+                - Average Response Time: ${summary.avgResponseTime}ms
+                - Success Rate: ${summary.successRate}%
+                - Error Rate: ${summary.errorRate}%
+                
+                ## AI Usage
+                - Ollama Requests: ${summary.ollamaRequests}
+                - OpenAI Requests: ${summary.openaiRequests}
+                - Average Token Usage: ${summary.avgTokenUsage}
+                
+                ## System Health
+                - Memory Usage: ${summary.memoryUsage}%
+                - CPU Usage: ${summary.cpuUsage}%
+                - Disk Usage: ${summary.diskUsage}%
+                
+                Full report available in the artifacts.
+              `
+            }) 

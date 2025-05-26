@@ -1,0 +1,60 @@
+name: Performance Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    - cron: '0 0 * * 0'
+
+jobs:
+  performance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v9
+        with:
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+          configPath: './lighthouserc.js'
+
+      - name: Run k6 Performance Tests
+        uses: grafana/k6-action@v0.2.0
+        with:
+          filename: tests/performance/load-test.js
+          flags: --out json=results.json
+
+      - name: Run Web Vitals
+        run: pnpm test:web-vitals
+
+      - name: Upload Performance Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: performance-report
+          path: |
+            .lighthouseci/
+            results.json
+            web-vitals-report.json
+
+      - name: Check Performance Budget
+        run: |
+          if [ -f "results.json" ]; then
+            pnpm check-performance-budget
+          fi 
