@@ -1,19 +1,31 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
-import * as schema from './schema';
+import { config } from '../config.js';
+import * as schema from './schema.js';
 
 // Create connection pool
-export const pool = new Pool({
-  host: process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.DB_PORT || '5432'),
-  user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || 'postgres',
-  database: process.env.DB_NAME || 'openwebui',
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+const pool = new Pool({
+  connectionString: config.DATABASE_URL,
 });
 
 // Create Drizzle instance
 export const db = drizzle(pool, { schema });
 
 // Export types
-export type Database = typeof db; 
+export type Database = typeof db;
+
+// Funkcja pomocnicza do wykonywania transakcji
+export async function withTransaction<T>(callback: (db: typeof db) => Promise<T>): Promise<T> {
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const result = await callback(drizzle(client, { schema }));
+    await client.query('COMMIT');
+    return result;
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
+  }
+} 
