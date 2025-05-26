@@ -1,0 +1,24 @@
+# Default owners for everything in the repo
+* @DannyBiernacki
+
+# Frontend specific files
+/frontend/ @DannyBiernacki
+
+# Backend specific files
+/backend/ @DannyBiernacki
+
+# Shared code
+/shared/ @DannyBiernacki
+
+# Documentation
+/docs/ @DannyBiernacki
+
+# GitHub specific files
+/.github/ @DannyBiernacki
+
+# Configuration files
+*.yml @DannyBiernacki
+*.yaml @DannyBiernacki
+*.json @DannyBiernacki
+*.config.js @DannyBiernacki
+*.config.ts @DannyBiernacki 

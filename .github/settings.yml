@@ -1,0 +1,55 @@
+repository:
+  name: openwebui-pro
+  description: Nowoczesna platforma AI z optymalizacjami dla M4 Pro
+  homepage: https://github.com/DannyBiernacki/openwebui-pro
+  topics:
+    - ai
+    - ollama
+    - openai
+    - nextjs
+    - typescript
+    - m4-pro
+    - fastify
+    - postgresql
+
+branches:
+  - name: main
+    protection:
+      required_status_checks:
+        strict: true
+        contexts:
+          - "Test (18.x)"
+          - "Test (20.x)"
+          - "Build"
+      enforce_admins: true
+      required_pull_request_reviews:
+        required_approving_review_count: 1
+        dismiss_stale_reviews: true
+        require_code_owner_reviews: true
+      restrictions: null
+
+labels:
+  - name: bug
+    color: d73a4a
+    description: Something isn't working
+  - name: enhancement
+    color: a2eeef
+    description: New feature or request
+  - name: documentation
+    color: 0075ca
+    description: Improvements or additions to documentation
+  - name: good first issue
+    color: 7057ff
+    description: Good for newcomers
+  - name: help wanted
+    color: 008672
+    description: Extra attention is needed
+  - name: m4-pro
+    color: 84b6eb
+    description: M4 Pro specific optimizations
+  - name: performance
+    color: 0e8a16
+    description: Performance improvements
+  - name: security
+    color: ee0701
+    description: Security related issues 
