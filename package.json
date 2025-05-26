@@ -1,0 +1,38 @@
+{
+  "name": "openwebui-pro",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Nowoczesna platforma AI z optymalizacjami dla M4 Pro",
+  "author": "Danny Biernacki <dev@danielbiernacki.pl>",
+  "scripts": {
+    "dev": "pnpm run --parallel dev",
+    "build": "pnpm run --parallel build",
+    "start": "pnpm run --parallel start",
+    "test": "pnpm run --parallel test",
+    "lint": "pnpm run --parallel lint",
+    "format": "pnpm run --parallel format",
+    "migrate": "pnpm --filter backend migrate",
+    "generate": "pnpm run --parallel generate",
+    "clean": "pnpm run --parallel clean"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.15.4",
+  "workspaces": [
+    "frontend",
+    "backend",
+    "shared"
+  ],
+  "devDependencies": {
+    "@types/node": "^20.11.19",
+    "@typescript-eslint/eslint-plugin": "^7.0.1",
+    "@typescript-eslint/parser": "^7.0.1",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "prettier": "^3.2.5",
+    "typescript": "^5.3.3"
+  }
+}

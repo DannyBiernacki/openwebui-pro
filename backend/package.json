@@ -1,0 +1,47 @@
+{
+  "name": "openwebui-pro-backend",
+  "version": "1.0.0",
+  "description": "Backend dla OpenWebUI Pro z optymalizacjami dla M4 Pro",
+  "main": "dist/server.js",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "test": "jest",
+    "lint": "eslint . --ext .ts",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "migrate": "drizzle-kit push:pg",
+    "generate": "drizzle-kit generate:pg"
+  },
+  "dependencies": {
+    "@fastify/cors": "^8.4.1",
+    "@fastify/rate-limit": "^8.0.0",
+    "drizzle-orm": "^0.29.3",
+    "fastify": "^4.24.3",
+    "ollama": "^0.4.0",
+    "openai": "^4.24.1",
+    "pg": "^8.11.3",
+    "pino": "^8.16.2",
+    "pino-pretty": "^10.2.3",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.11",
+    "@types/node": "^20.10.4",
+    "@types/pg": "^8.10.9",
+    "@typescript-eslint/eslint-plugin": "^6.13.2",
+    "@typescript-eslint/parser": "^6.13.2",
+    "drizzle-kit": "^0.20.13",
+    "eslint": "^8.55.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "jest": "^29.7.0",
+    "prettier": "^3.1.0",
+    "ts-jest": "^29.1.1",
+    "tsx": "^4.6.2",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+} 
