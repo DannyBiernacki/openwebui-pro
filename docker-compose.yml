@@ -2,30 +2,42 @@ version: '3.8'
 
 services:
   postgres:
-    image: ankane/pgvector:v0.5.1
-    container_name: openwebui_postgres
+    image: postgres:15-alpine
+    container_name: openwebui-postgres
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: openwebui_pro
+      POSTGRES_DB: openwebui
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
+      interval: 10s
       timeout: 5s
       retries: 5
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: openwebui-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
     deploy:
       resources:
-        limits:
-          cpus: '4'
-          memory: 4G
         reservations:
-          cpus: '2'
-          memory: 2G
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 volumes:
   postgres_data:
-    driver: local 
+  ollama_data: 
