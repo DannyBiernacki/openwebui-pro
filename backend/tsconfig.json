@@ -20,6 +20,8 @@
     "paths": {
       "@/*": ["src/*"]
     },
+    "types": ["node", "jest"],
+    "typeRoots": ["./node_modules/@types", "./src/types"],
     // Optymalizacje dla M4 Pro
     "incremental": true,
     "tsBuildInfoFile": "dist/.tsbuildinfo",
